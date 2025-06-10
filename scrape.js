@@ -1,12 +1,16 @@
-import { chromium } from 'playwright';
-import fs from 'fs';
-import path from 'path';
+const { chromium } = require('playwright');
+const fs = require('fs');
+const path = require('path');
 
 (async () => {
   // 1. Lanzar navegador con flags especiales para Render
   const browser = await chromium.launch({
     headless: true,
-    args: ['--no-sandbox']
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage'
+    ]
   });
 
   const page = await browser.newPage();
