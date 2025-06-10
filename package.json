@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node index-blog.js"
+    "start": "node server.js"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "playwright": "^1.43.1"
   }
 }
-
