@@ -1,2 +1,6 @@
-/data
-/reportes
+# .gitignore
+node_modules/
+data/
+reportes/
+.DS_Store
+
