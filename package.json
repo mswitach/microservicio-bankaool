@@ -1,0 +1,12 @@
+{
+  "name": "nublog-microservice",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index-blog.js"
+  },
+  "dependencies": {
+    "playwright": "^1.43.1"
+  }
+}
+
