@@ -1,27 +1,24 @@
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
+import { chromium } from 'playwright';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Obtener __dirname en ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 (async () => {
-  // 1. Lanzar navegador con flags especiales para Render
   const browser = await chromium.launch({
     headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage'
-    ]
+    args: ['--no-sandbox'] // necesario en Render
   });
 
   const page = await browser.newPage();
 
   console.log('🌐 Abriendo https://blog.nu.com.mx/');
   await page.goto('https://blog.nu.com.mx/', { waitUntil: 'networkidle', timeout: 0 });
-
-  // 2. Esperar títulos
   await page.waitForSelector('h3.latest-post-title', { timeout: 60000 });
 
-  // 3. Extraer títulos y URLs
   const previews = await page.$$eval(
     'h3.latest-post-title',
     nodes => nodes.slice(0, 4).map(h3 => {
@@ -33,7 +30,6 @@ const path = require('path');
     })
   );
 
-  // 4. Entrar a cada post
   const posts = [];
   for (const { title, url } of previews) {
     if (!url) continue;
@@ -52,8 +48,8 @@ const path = require('path');
 
   await browser.close();
 
-  // 5. Guardar NDJSON
-  const outputDir1 = path.resolve('data/cliente2');
+  // Guardar NDJSON
+  const outputDir1 = path.join(__dirname, 'data/cliente2');
   fs.mkdirSync(outputDir1, { recursive: true });
   const ndjsonPath = path.join(outputDir1, 'nublog-latest-posts.ndjson');
   fs.writeFileSync(
@@ -62,7 +58,7 @@ const path = require('path');
   );
   console.log(`✅ NDJSON generado en ${ndjsonPath}`);
 
-  // 6. Generar HTML
+  // Generar HTML
   const reportDate = new Date().toLocaleDateString('es-ES');
   let html = `<!DOCTYPE html>
 <html lang="es">
@@ -94,7 +90,7 @@ const path = require('path');
 
   html += '</body>\n</html>';
 
-  const outputDir2 = path.resolve('reportes/cliente2');
+  const outputDir2 = path.join(__dirname, 'reportes/cliente2');
   fs.mkdirSync(outputDir2, { recursive: true });
   const htmlPath = path.join(outputDir2, 'nublog-latest-posts.html');
   fs.writeFileSync(htmlPath, html);
